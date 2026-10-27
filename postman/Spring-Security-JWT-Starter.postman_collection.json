@@ -1,0 +1,22 @@
+{
+  "info": {
+    "name": "Spring Security JWT Starter",
+    "_postman_id": "5d7b38ab-4d8f-4ef3-9b7b-9d7a5e4a8c10",
+    "description": "Register, login, refresh, access protected endpoints, and logout. Set baseUrl to http://localhost:8080.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key":"baseUrl","value":"http://localhost:8080"},
+    {"key":"accessToken","value":""},
+    {"key":"refreshToken","value":""}
+  ],
+  "item": [
+    {"name":"Register","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"email\":\"demo@example.com\",\"password\":\"correct-horse-battery\"}"},"url":"{{baseUrl}}/api/v1/auth/register"},"event":[{"listen":"test","script":{"type":"text/javascript","exec":["if (pm.response.code === 201 || pm.response.code === 200) { const data = pm.response.json(); pm.collectionVariables.set('accessToken', data.accessToken); pm.collectionVariables.set('refreshToken', data.refreshToken); }"]}}]},
+    {"name":"Login","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"email\":\"demo@example.com\",\"password\":\"correct-horse-battery\"}"},"url":"{{baseUrl}}/api/v1/auth/login"},"event":[{"listen":"test","script":{"type":"text/javascript","exec":["if (pm.response.code === 200) { const data = pm.response.json(); pm.collectionVariables.set('accessToken', data.accessToken); pm.collectionVariables.set('refreshToken', data.refreshToken); }"]}}]},
+    {"name":"Current user","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{accessToken}}"}],"url":"{{baseUrl}}/api/v1/auth/me"}},
+    {"name":"USER protected endpoint","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{accessToken}}"}],"url":"{{baseUrl}}/api/v1/demo/user"}},
+    {"name":"ADMIN endpoint (USER should get 403)","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{accessToken}}"}],"url":"{{baseUrl}}/api/v1/demo/admin"}},
+    {"name":"Refresh (rotates refresh token)","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"refreshToken\":\"{{refreshToken}}\"}"},"url":"{{baseUrl}}/api/v1/auth/refresh"},"event":[{"listen":"test","script":{"type":"text/javascript","exec":["if (pm.response.code === 200) { const data = pm.response.json(); pm.collectionVariables.set('accessToken', data.accessToken); pm.collectionVariables.set('refreshToken', data.refreshToken); }"]}}]},
+    {"name":"Logout (revokes supplied refresh token)","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"refreshToken\":\"{{refreshToken}}\"}"},"url":"{{baseUrl}}/api/v1/auth/logout"}}
+  ]
+}
